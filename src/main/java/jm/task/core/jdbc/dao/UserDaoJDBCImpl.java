@@ -40,12 +40,12 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        final String query = "INSERT INTO users(name, last_name, age) VALUES('"
-                + name + "', '"
-                + lastName + "', '"
-                + age + "')";
+        final String query = "INSERT INTO users(name, last_name, age) VALUES(?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setByte(3, age);
             preparedStatement.execute();
 
             System.out.println("User с именем " + name + " добавлен в базу данных");
@@ -55,6 +55,14 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
+        final String query = "DELETE FROM users WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.execute();
+        } catch (SQLException ignored) {
+
+        }
         dataDefinition("DELETE FROM users WHERE id = " + id);
     }
 
